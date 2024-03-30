@@ -6,7 +6,7 @@ import { EErrors } from "../utils/customErrors/enums.js";
 export const getProducts = async (req, res, next) => {
     const { limit = 10, page = 1, sort = "", category = "" } = req.query;
 
-    //req.logger.http(`Petición llegó al controlador (getProducts).`);
+    req.logger.http(`Petición llegó al controlador (getProducts).`);
 
     const filters = { stock: { $gt: 0 } };
     if (category) filters.category = category;
@@ -43,17 +43,17 @@ export const getProducts = async (req, res, next) => {
 export const getProduct = async (req, res, next) => {
     const idProduct = req.params.pid;
 
-    //req.logger.http(`Petición llegó al controlador (getProduct).`);
+    req.logger.http(`Petición llegó al controlador (getProduct).`);
 
     try {
         const product = await findProductById(idProduct);
 
         if (product) {
-            //req.logger.debug(product)
+            req.logger.debug(product)
             return res.status(200).json(product)
         }
 
-        //req.logger.warning("No se encontro el producto")
+        req.logger.warning("No se encontro el producto")
         return res.status(401).json({ message: "No se encontro el producto" })
 
     } catch (error) {
@@ -65,7 +65,7 @@ export const postProduct = async (req, res, next) => {
     const user = req.user
     const productInfo = req.body;
 
-    //req.logger.http(`Petición llegó al controlador`);
+    req.logger.http(`Petición llegó al controlador`);
     try {
         const requiredFields = ['title', 'description', 'price', 'code', 'stock', 'category'];
         if (requiredFields.every((field) => productInfo[field])) {
@@ -87,7 +87,7 @@ export const postProduct = async (req, res, next) => {
         }
 
     } catch (error) {
-        //req.logger.error(error.message)
+        req.logger.error(error.message)
         next(error)
     }
 }
@@ -97,7 +97,7 @@ export const updateProduct = async (req, res, next) => {
     const idProduct = req.params.pid;
     const info = req.body;
 
-    //req.logger.http(`Petición llegó al controlador (updateProduct).`);
+    req.logger.http(`Petición llegó al controlador (updateProduct).`);
 
     try {
         if (user.role === "admin") {
@@ -110,8 +110,8 @@ export const updateProduct = async (req, res, next) => {
 
         const product = await findProductById(idProduct);
 
-        //req.logger.debug(user._id)
-        //req.logger.debug(product.owner)
+        req.logger.debug(user._id)
+        req.logger.debug(product.owner)
 
         if (user.role === "premium" && user._id.equals(product.owner)) {
             await updateOneProduct(idProduct, info);
@@ -126,7 +126,7 @@ export const updateProduct = async (req, res, next) => {
         });
 
     } catch (error) {
-        //req.logger.error(error.message)
+        req.logger.error(error.message)
         next(error)
     }
 }
@@ -135,7 +135,7 @@ export const deleteProduct = async (req, res, next) => {
     const user = req.user;
     const idProduct = req.params.pid;
 
-    //req.logger.http(`Petición llegó al controlador (deleteProduct).`);
+    req.logger.http(`Petición llegó al controlador (deleteProduct).`);
 
     try {
         if (user.role === "admin") {
@@ -161,7 +161,7 @@ export const deleteProduct = async (req, res, next) => {
         });
 
     } catch (error) {
-        //req.logger.error(error.message)
+        req.logger.error(error.message)
         next(error)
     }
 }

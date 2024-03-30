@@ -14,7 +14,7 @@ import cors from 'cors';
 import { Server } from "socket.io";
 import errorHandler from './config/middlewares/errorHandler.js';
 
-//import { addLogger } from './utils/logger/logger.js';
+import { addLogger } from './utils/logger/logger.js';
 
 //CORS
 const whiteList = ["http://localhost:3000"];
@@ -48,6 +48,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+app.use(addLogger);
 
 
 //Passport
