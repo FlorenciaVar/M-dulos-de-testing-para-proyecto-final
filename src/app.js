@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express'
 import router from './routes/index.routes.js';
 import passport from 'passport';
 import { engine } from 'express-handlebars';
@@ -13,7 +15,6 @@ import { initializePassport } from './config/passport/passport.js';
 import cors from 'cors';
 import { Server } from "socket.io";
 import errorHandler from './config/middlewares/errorHandler.js';
-
 import { addLogger } from './utils/logger/logger.js';
 
 //CORS
@@ -34,10 +35,26 @@ const corsOptions = {
     maxAge: 3600,
 };
 
+//SWAGGER
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: "Doc de mi aplicacion",
+            description: "Aqui iria la descripcion de mi proyecto"
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+
 //Iniciar Server
 const app = express()
 
 //MIDDLEWARES
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 app.use(cookieParser(process.env.JWT_SECRET))
 app.use(morgan('dev'))
 app.use(express.json())
