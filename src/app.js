@@ -17,22 +17,17 @@ import { Server } from "socket.io";
 import errorHandler from './config/middlewares/errorHandler.js';
 import { addLogger } from './utils/logger/logger.js';
 
-//CORS
-const whiteList = ["http://localhost:3000"];
+// Configuración de CORS
+const whiteList = ["http://localhost:3000", "http://localhost:8080"];
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (whiteList.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    methods: 'GET, POST, PUT, DELETE',
-    optionsSuccessStatus: 200,
-    preflightContinue: false,
-    maxAge: 3600,
+  origin: function (origin, callback) {
+    if (whiteList.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 };
 
 //SWAGGER
@@ -86,12 +81,14 @@ await mongoose.connect('mongodb+srv://menichinidinopaolo:Romi6282@cluster1.zr0m6
 //connectionMongoose()
 
 
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
 //ROUTES
 app.use('/', router);
 
+
 //Errors
 app.use(errorHandler);
-
 
 
 //PUERTO DEL SERVIDOR
